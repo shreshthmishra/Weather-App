@@ -6,6 +6,7 @@ const api={
 const searchbox = document.querySelector('.search-box');
 searchbox.addEventListener('keypress',function(evt){
     if(evt.keyCode == 13){
+        searchbox.blur();
         getResults(searchbox.value);
         console.log(searchbox.value);
     }
@@ -20,21 +21,38 @@ function getResults(query){
 
 function displayResults(weather){
     console.log(weather);
-    let city = document.querySelector('.location .city');
-    city.innerText = `${weather.name},${weather.sys.country}`;
+    if(weather.cod!=404)
+    {
+        document.getElementById('err-msg').innerHTML = "";
 
-    let now=new Date();
-    let date = document.querySelector('.location .date');
-    date.innerText = dateBuilder(now);
+        let city = document.querySelector('.location .city');
+        city.innerText = `${weather.name},${weather.sys.country}`;
+    
+        let now=new Date();
+        let date = document.querySelector('.location .date');
+        date.innerText = dateBuilder(now);
+    
+        let temp = document.querySelector('.current .temp');
+        temp.innerHTML=`${Math.round(weather.main.temp)}<span>°C</span>`;
+    
+        let weather_el = document.querySelector('.current .weather');
+        weather_el.innerText = `${weather.weather[0].main}`;
+    
+        let hilow = document.querySelector('.hi-low');
+        hilow.innerText = `${Math.round(weather.main.temp_min)}°c / ${Math.round(weather.main.temp_max)}°c`;
+    }
+    else {
+        document.getElementById('err-msg').innerHTML = "Sorry couldn't find the desired city";
+        clearRegions();
+    }
+}
 
-    let temp = document.querySelector('.current .temp');
-    temp.innerHTML=`${Math.round(weather.main.temp)}<span>°C</span>`;
-
-    let weather_el = document.querySelector('.current .weather');
-    weather_el.innerText = `${weather.weather[0].main}`;
-
-    let hilow = document.querySelector('.hi-low');
-    hilow.innerText = `${Math.round(weather.main.temp_min)}°c / ${Math.round(weather.main.temp_max)}°c`;
+function clearRegions() {
+    document.querySelector('.city').innerHTML = "";
+    document.querySelector('.date').innerHTML = "";
+    document.querySelector('.temp').innerHTML = "";
+    document.querySelector('.weather').innerHTML = "";
+    document.querySelector('.hi-low').innerHTML = "";
 }
 
 function dateBuilder (d) {
